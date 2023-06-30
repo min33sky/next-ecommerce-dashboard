@@ -37,6 +37,8 @@ export default function StoreModal() {
 
   const onSubmit = (data: FormType) => {
     console.log(data);
+
+    console.log(!!formSchema.parse(data));
   };
 
   return (
@@ -65,7 +67,7 @@ export default function StoreModal() {
               />
 
               <div className="pt-6 space-x-2 flex items-center justify-end">
-                <Button variant={'outline'} onClick={onClose}>
+                <Button type="button" variant={'outline'} onClick={onClose}>
                   Cancel
                 </Button>
                 <Button type="submit">Continue</Button>

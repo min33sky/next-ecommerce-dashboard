@@ -11,6 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^4.21.12",
     "@hookform/resolvers": "^3.1.1",
+    "@prisma/client": "^4.16.1",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
@@ -36,6 +37,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "prisma": "^4.16.1"
   }
 }
