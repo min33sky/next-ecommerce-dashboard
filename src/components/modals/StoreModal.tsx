@@ -1,7 +1,7 @@
 'use client';
 
 import { useModal } from '@/app/hooks/useModal';
-import React from 'react';
+import React, { startTransition } from 'react';
 import Modal from '../Modal';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -21,10 +21,13 @@ import { StoreValidator } from '@/lib/validators/store';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
+import { Store } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 
 type FormType = z.infer<typeof StoreValidator>;
 
 export default function StoreModal() {
+  const router = useRouter();
   const form = useForm<FormType>({
     resolver: zodResolver(StoreValidator),
     defaultValues: {
@@ -40,7 +43,7 @@ export default function StoreModal() {
         name,
       };
 
-      const { data } = await axios.post('/api/store', payload);
+      const { data } = await axios.post<Store>('/api/store', payload);
       return data;
     },
     onError: (error) => {
@@ -51,7 +54,11 @@ export default function StoreModal() {
     },
     onSuccess: (data) => {
       console.log(data);
-      toast.success('Store created successfully');
+      startTransition(() => {
+        toast.success('Store created successfully');
+        onClose();
+        router.push(`/${data.id}`);
+      });
     },
   });
 
