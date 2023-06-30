@@ -23,6 +23,7 @@ import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { Store } from '@prisma/client';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 type FormType = z.infer<typeof StoreValidator>;
 
@@ -93,16 +94,22 @@ export default function StoreModal() {
                 )}
               />
 
-              <DialogFooter className="pt-6 space-x-2 flex items-center justify-end">
+              <DialogFooter className="pt-6">
                 <Button
                   type="button"
                   disabled={isLoading}
                   variant={'outline'}
                   onClick={onClose}
+                  className="w-full sm:w-auto"
                 >
                   취소
                 </Button>
-                <Button type="submit" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full sm:w-auto"
+                  isLoading={isLoading}
+                >
                   계속
                 </Button>
               </DialogFooter>
