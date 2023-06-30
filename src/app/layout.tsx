@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="ko">
+      <html lang="ko" className="antialiased scroll-smooth">
         <body>
           <StoreModal />
           {children}

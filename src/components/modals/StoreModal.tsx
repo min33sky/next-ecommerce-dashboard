@@ -16,18 +16,14 @@ import {
 } from '../ui/form';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { DialogFooter } from '../ui/dialog';
+import { StoreValidator } from '@/lib/validators/store';
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Store name must be at least 2 characters long',
-  }),
-});
-
-type FormType = z.infer<typeof formSchema>;
+type FormType = z.infer<typeof StoreValidator>;
 
 export default function StoreModal() {
   const form = useForm<FormType>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(StoreValidator),
     defaultValues: {
       name: '',
     },
@@ -37,8 +33,6 @@ export default function StoreModal() {
 
   const onSubmit = (data: FormType) => {
     console.log(data);
-
-    console.log(!!formSchema.parse(data));
   };
 
   return (
@@ -57,21 +51,21 @@ export default function StoreModal() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel htmlFor="name">이름</FormLabel>
                     <FormControl>
-                      <Input placeholder="E-Commerce" {...field} />
+                      <Input id="name" placeholder="E-Commerce" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className="pt-6 space-x-2 flex items-center justify-end">
+              <DialogFooter className="pt-6 space-x-2 flex items-center justify-end">
                 <Button type="button" variant={'outline'} onClick={onClose}>
-                  Cancel
+                  취소
                 </Button>
-                <Button type="submit">Continue</Button>
-              </div>
+                <Button type="submit">계속</Button>
+              </DialogFooter>
             </form>
           </Form>
         </div>
