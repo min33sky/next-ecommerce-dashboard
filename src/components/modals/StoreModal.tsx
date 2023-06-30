@@ -18,6 +18,9 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { DialogFooter } from '../ui/dialog';
 import { StoreValidator } from '@/lib/validators/store';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
 
 type FormType = z.infer<typeof StoreValidator>;
 
@@ -31,8 +34,31 @@ export default function StoreModal() {
 
   const { isOpen, onClose } = useModal();
 
+  const { mutate: createStore, isLoading } = useMutation({
+    mutationFn: async ({ name }: FormType) => {
+      const payload: FormType = {
+        name,
+      };
+
+      const { data } = await axios.post('/api/store', payload);
+      return data;
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        return toast.error(error.response?.data.message);
+      }
+      toast.error('Something went wrong');
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      toast.success('Store created successfully');
+    },
+  });
+
   const onSubmit = (data: FormType) => {
     console.log(data);
+
+    createStore(data);
   };
 
   return (
@@ -61,10 +87,17 @@ export default function StoreModal() {
               />
 
               <DialogFooter className="pt-6 space-x-2 flex items-center justify-end">
-                <Button type="button" variant={'outline'} onClick={onClose}>
+                <Button
+                  type="button"
+                  disabled={isLoading}
+                  variant={'outline'}
+                  onClick={onClose}
+                >
                   취소
                 </Button>
-                <Button type="submit">계속</Button>
+                <Button type="submit" disabled={isLoading}>
+                  계속
+                </Button>
               </DialogFooter>
             </form>
           </Form>

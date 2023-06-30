@@ -1,6 +1,8 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import StoreModal from '@/components/modals/StoreModal';
+import ClientProvider from '@/components/ClientProvider';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: 'Ecommerce Dashboard',
@@ -16,8 +18,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ko" className="antialiased scroll-smooth">
         <body>
-          <StoreModal />
-          {children}
+          <ClientProvider>
+            <StoreModal />
+            {children}
+            <Toaster />
+          </ClientProvider>
         </body>
       </html>
     </ClerkProvider>
