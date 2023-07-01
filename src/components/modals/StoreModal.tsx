@@ -23,20 +23,19 @@ import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { Store } from '@prisma/client';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
 
 type FormType = z.infer<typeof StoreValidator>;
 
 export default function StoreModal() {
   const router = useRouter();
+  const { isOpen, onClose } = useModal();
+
   const form = useForm<FormType>({
     resolver: zodResolver(StoreValidator),
     defaultValues: {
       name: '',
     },
   });
-
-  const { isOpen, onClose } = useModal();
 
   const { mutate: createStore, isLoading } = useMutation({
     mutationFn: async ({ name }: FormType) => {
