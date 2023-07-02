@@ -12,7 +12,7 @@ export default function Home() {
 
   return (
     <main>
-      <Button onClick={onOpen}>Open Modal</Button>
+      <Button onClick={() => onOpen('createStore')}>Open Modal</Button>
       {/* <StoreModal /> */}
     </main>
   );

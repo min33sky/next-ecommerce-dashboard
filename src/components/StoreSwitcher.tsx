@@ -103,7 +103,7 @@ export default function StoreSwitcher({
               <CommandItem
                 onSelect={() => {
                   setOpen(false);
-                  storeModal.onOpen();
+                  storeModal.onOpen('createStore');
                 }}
               >
                 <PlusCircle className="mr-2 w-5 h-5" />

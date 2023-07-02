@@ -22,6 +22,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
+import { useModal } from '@/app/hooks/useModal';
+import AlertModal from './modals/AlertModal';
 
 interface SettingsFormProps {
   initialData: Store;
@@ -30,6 +32,7 @@ interface SettingsFormProps {
 export default function SettingsForm({ initialData }: SettingsFormProps) {
   const router = useRouter();
   const params = useParams();
+  const { onOpen } = useModal();
 
   const form = useForm<StoreRequest>({
     resolver: zodResolver(StoreValidator),
@@ -71,9 +74,14 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
 
   return (
     <>
+      <AlertModal onConfirm={() => alert('구현중...')} />
       <div className="flex items-center justify-between">
         <Heading title="설정" description="스토어 기본 설정 관리" />
-        <Button variant={'destructive'} size={'icon'} onClick={() => {}}>
+        <Button
+          variant={'destructive'}
+          size={'icon'}
+          onClick={() => onOpen('alert')}
+        >
           <Trash className="h-4 w-4" />
         </Button>
       </div>

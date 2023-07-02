@@ -70,6 +70,7 @@ export default function StoreModal() {
 
   return (
     <Modal
+      type="createStore"
       title="스토어 생성하기"
       description="상품들과 카테코리를 관리할 수 있는 스토어를 생성하세요."
       isOpen={isOpen}
