@@ -1,15 +1,16 @@
+import SettingsForm from '@/components/SettingsForm';
 import { prisma } from '@/lib/db';
 import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
-interface Props {
+interface SettingsPageProps {
   params: {
     storeId: string;
   };
 }
 
-export default async function DashboardPage({ params: { storeId } }: Props) {
+export default async function SettingsPage({ params }: SettingsPageProps) {
   const { userId } = auth();
 
   if (!userId) {
@@ -19,7 +20,7 @@ export default async function DashboardPage({ params: { storeId } }: Props) {
   const store = await prisma.store.findFirst({
     where: {
       userId,
-      id: storeId,
+      id: params.storeId,
     },
   });
 
@@ -27,5 +28,11 @@ export default async function DashboardPage({ params: { storeId } }: Props) {
     return redirect('/');
   }
 
-  return <div className="">DashboardPage : {storeId}</div>;
+  return (
+    <div className="flex flex-col">
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <SettingsForm initialData={store} />
+      </div>
+    </div>
+  );
 }
