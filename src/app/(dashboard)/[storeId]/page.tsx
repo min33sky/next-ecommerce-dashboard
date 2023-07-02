@@ -16,16 +16,17 @@ export default async function DashboardPage({ params: { storeId } }: Props) {
     return redirect('/sign-in');
   }
 
-  const store = await prisma.store.findFirst({
-    where: {
-      userId,
-      id: storeId,
-    },
-  });
+  //? 일단 주석처리
+  // const store = await prisma.store.findFirst({
+  //   where: {
+  //     userId,
+  //     id: storeId,
+  //   },
+  // });
 
-  if (!store) {
-    return redirect('/');
-  }
+  // if (!store) {
+  //   return redirect('/');
+  // }
 
   return <div className="">DashboardPage : {storeId}</div>;
 }

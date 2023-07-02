@@ -43,7 +43,7 @@ export default function StoreModal() {
         name,
       };
 
-      const { data } = await axios.post<Store>('/api/store', payload);
+      const { data } = await axios.post<Store>('/api/stores', payload);
       return data;
     },
     onError: (error) => {
