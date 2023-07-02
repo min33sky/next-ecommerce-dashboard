@@ -137,15 +137,12 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json(
-      {
-        message: '삭제되었습니다.',
-      },
-      {
-        status: 204,
-      },
-    );
+    return NextResponse.json({
+      message: '삭제되었습니다.',
+    });
   } catch (error) {
+    console.log('### delete Store Route Error: ', error);
+
     return NextResponse.json(
       {
         message: '알 수 없는 에러가 발생했습니다.',

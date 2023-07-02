@@ -41,7 +41,7 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
     },
   });
 
-  const { mutate: updateStore } = useMutation({
+  const { mutate: updateStore, isLoading: isUpdateLoading } = useMutation({
     mutationFn: async ({ name }: StoreRequest) => {
       const payload: StoreRequest = {
         name,
@@ -67,14 +67,33 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
     },
   });
 
+  const { mutate: deleteStore, isLoading: isDeleteLoading } = useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.delete(`/api/stores/${params.storeId}`);
+      return data;
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        return toast.error(error.response?.data.message);
+      }
+      toast.error('Something went wrong');
+    },
+    onSuccess: (data) => {
+      startTransition(() => {
+        toast.success('Store deleted successfully');
+        router.push('/');
+      });
+    },
+  });
+
   const onSubmit = (data: StoreRequest) => {
-    console.log(data);
     updateStore(data);
   };
 
   return (
     <>
-      <AlertModal onConfirm={() => alert('구현중...')} />
+      <AlertModal loading={isDeleteLoading} onConfirm={deleteStore} />
+
       <div className="flex items-center justify-between">
         <Heading title="설정" description="스토어 기본 설정 관리" />
         <Button
@@ -85,7 +104,9 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
           <Trash className="h-4 w-4" />
         </Button>
       </div>
+
       <Separator />
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -101,7 +122,7 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
                   <FormControl>
                     <Input
                       id="store-name"
-                      disabled={false}
+                      disabled={isUpdateLoading}
                       placeholder="스토어 이름"
                       {...field}
                     />
@@ -111,10 +132,11 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
               )}
             />
           </div>
+
           <Button
             type="submit"
-            disabled={false}
-            isLoading={false}
+            disabled={isUpdateLoading}
+            isLoading={isUpdateLoading}
             className="ml-auto"
           >
             변경하기
