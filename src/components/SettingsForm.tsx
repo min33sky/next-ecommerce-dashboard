@@ -24,6 +24,8 @@ import axios, { AxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
 import { useModal } from '@/app/hooks/useModal';
 import AlertModal from './modals/AlertModal';
+import ApiAlert from './ApiAlert';
+import useOrigin from '@/app/hooks/useOrigin';
 
 interface SettingsFormProps {
   initialData: Store;
@@ -33,6 +35,7 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
   const router = useRouter();
   const params = useParams();
   const { onOpen } = useModal();
+  const origin = useOrigin();
 
   const form = useForm<StoreRequest>({
     resolver: zodResolver(StoreValidator),
@@ -143,6 +146,14 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
           </Button>
         </form>
       </Form>
+
+      <Separator />
+
+      <ApiAlert
+        title="NEXT_PUBLIC_API_URL"
+        description={`${origin}/api/${params.storeId}`}
+        variant="public"
+      />
     </>
   );
 }
