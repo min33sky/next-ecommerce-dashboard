@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db';
 import { StoreValidator } from '@/lib/validators/store';
 import { auth } from '@clerk/nextjs';
+import { Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -33,6 +34,8 @@ export async function POST(req: Request) {
       status: 201,
     });
   } catch (error) {
+    console.log('### create Store Route Error: ', error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -42,6 +45,19 @@ export async function POST(req: Request) {
           status: 400,
         },
       );
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return NextResponse.json(
+          {
+            message: '이미 존재하는 이름입니다.',
+          },
+          {
+            status: 400,
+          },
+        );
+      }
     }
 
     return NextResponse.json(

@@ -1,7 +1,7 @@
 'use client';
 
 import { Store } from '@prisma/client';
-import React from 'react';
+import React, { startTransition } from 'react';
 import Heading from './Heading';
 import { Button } from './ui/button';
 import { Trash } from 'lucide-react';
@@ -18,12 +18,19 @@ import {
   FormMessage,
 } from './ui/form';
 import { Input } from './ui/input';
+import { useParams, useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { toast } from 'react-hot-toast';
 
 interface SettingsFormProps {
   initialData: Store;
 }
 
 export default function SettingsForm({ initialData }: SettingsFormProps) {
+  const router = useRouter();
+  const params = useParams();
+
   const form = useForm<StoreRequest>({
     resolver: zodResolver(StoreValidator),
     defaultValues: {
@@ -31,8 +38,35 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
     },
   });
 
+  const { mutate: updateStore } = useMutation({
+    mutationFn: async ({ name }: StoreRequest) => {
+      const payload: StoreRequest = {
+        name,
+      };
+
+      const { data } = await axios.patch(
+        `/api/stores/${params.storeId}`,
+        payload,
+      );
+      return data;
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        return toast.error(error.response?.data.message);
+      }
+      toast.error('Something went wrong');
+    },
+    onSuccess: (data) => {
+      startTransition(() => {
+        toast.success('Store updated successfully');
+        router.refresh();
+      });
+    },
+  });
+
   const onSubmit = (data: StoreRequest) => {
     console.log(data);
+    updateStore(data);
   };
 
   return (
