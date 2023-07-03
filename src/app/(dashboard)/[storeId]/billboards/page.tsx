@@ -4,6 +4,9 @@ import React from 'react';
 import { BillboardColumn } from './columns';
 import { format } from 'date-fns';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 interface BillboardPageProps {
   params: {
     storeId: string;

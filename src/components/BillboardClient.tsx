@@ -30,7 +30,7 @@ export default function BillboardClient({ data }: BillboardClientProps) {
         />
         <Link
           className={buttonVariants({
-            variant: 'outline',
+            variant: 'default',
           })}
           href={`/${params.storeId}/billboards/new`}
         >
@@ -41,7 +41,7 @@ export default function BillboardClient({ data }: BillboardClientProps) {
 
       <Separator />
 
-      <DataTable data={data} columns={columns} />
+      <DataTable searchKey="label" data={data} columns={columns} />
     </>
   );
 }

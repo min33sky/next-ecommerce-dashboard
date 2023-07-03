@@ -27,6 +27,7 @@ import ImageUpload from './ImageUpload';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
 import AlertModal from './modals/AlertModal';
+import { useModal } from '@/app/hooks/useModal';
 
 interface BillboardFormProps {
   initialData: Billboard | null;
@@ -34,6 +35,7 @@ interface BillboardFormProps {
 
 export default function BillboardForm({ initialData }: BillboardFormProps) {
   const router = useRouter();
+  const { onOpen, onClose } = useModal();
   const params = useParams();
 
   const title = initialData ? 'Edit Billboard' : 'New Billboard';
@@ -51,6 +53,10 @@ export default function BillboardForm({ initialData }: BillboardFormProps) {
     },
   });
 
+  /**
+   * @description
+   * Mutation to create/update billboard
+   */
   const { mutate, isLoading } = useMutation({
     mutationFn: async ({ imageUrl, label }: BillboardRequest) => {
       const payload: BillboardRequest = {
@@ -85,10 +91,15 @@ export default function BillboardForm({ initialData }: BillboardFormProps) {
       startTransition(() => {
         toast.success(toastMessage);
         router.push(`/${params.storeId}/billboards`);
+        router.refresh();
       });
     },
   });
 
+  /**
+   * @description
+   * Mutation to delete billboard
+   */
   const { mutate: deleteBillboard, isLoading: isDeleteLoading } = useMutation({
     mutationFn: async () => {
       const { data } = await axios.delete(
@@ -106,6 +117,7 @@ export default function BillboardForm({ initialData }: BillboardFormProps) {
     onSuccess: (data) => {
       startTransition(() => {
         toast.success('Billboard deleted');
+        onClose();
         router.push(`/${params.storeId}/billboards`);
       });
     },
@@ -126,7 +138,7 @@ export default function BillboardForm({ initialData }: BillboardFormProps) {
           <Button
             variant={'destructive'}
             size={'icon'}
-            onClick={() => alert('삭제 구현 예정')}
+            onClick={() => onOpen('alert')}
           >
             <Trash className="w-4 h-4" />
           </Button>
