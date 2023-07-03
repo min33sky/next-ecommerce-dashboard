@@ -92,3 +92,45 @@ export async function POST(
     );
   }
 }
+
+export async function GET(
+  req: Request,
+  {
+    params: { storeId },
+  }: {
+    params: {
+      storeId: string;
+    };
+  },
+) {
+  try {
+    if (!storeId) {
+      return NextResponse.json(
+        {
+          message: 'Store ID가 필요합니다.',
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    const billboards = await prisma.billboard.findMany({
+      where: {
+        storeId,
+      },
+    });
+
+    return NextResponse.json(billboards);
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message:
+          'Billboards를 불러오는 과정에서 알 수 없는 에러가 발생했습니다.',
+      },
+      {
+        status: 500,
+      },
+    );
+  }
+}

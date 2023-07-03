@@ -12,6 +12,7 @@ import {
 } from '@/app/(dashboard)/[storeId]/billboards/columns';
 import { Separator } from './ui/separator';
 import { DataTable } from './ui/data-table';
+import ApiList from './ApiList';
 
 interface BillboardClientProps {
   data: BillboardColumn[];
@@ -42,6 +43,12 @@ export default function BillboardClient({ data }: BillboardClientProps) {
       <Separator />
 
       <DataTable searchKey="label" data={data} columns={columns} />
+
+      <Heading title="API" description="API for billboards" />
+
+      <Separator />
+
+      <ApiList entityName="billboards" entityIdName="billboardId" />
     </>
   );
 }
