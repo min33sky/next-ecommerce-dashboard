@@ -6,6 +6,9 @@
 - TypeScript
 - Tailwind CSS
 - Clerk
+- Cloudinary
+- Prisma
+- PostgreSQL
 
 ## Environment Variables
 
