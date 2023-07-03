@@ -7,8 +7,8 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Billboard } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import React, { startTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import Heading from './Heading';
 import { Button } from './ui/button';
@@ -24,6 +24,9 @@ import {
 } from './ui/form';
 import { Input } from './ui/input';
 import ImageUpload from './ImageUpload';
+import axios, { AxiosError } from 'axios';
+import { toast } from 'react-hot-toast';
+import AlertModal from './modals/AlertModal';
 
 interface BillboardFormProps {
   initialData: Billboard | null;
@@ -31,6 +34,7 @@ interface BillboardFormProps {
 
 export default function BillboardForm({ initialData }: BillboardFormProps) {
   const router = useRouter();
+  const params = useParams();
 
   const title = initialData ? 'Edit Billboard' : 'New Billboard';
   const description = initialData
@@ -47,26 +51,74 @@ export default function BillboardForm({ initialData }: BillboardFormProps) {
     },
   });
 
-  const {} = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: async ({ imageUrl, label }: BillboardRequest) => {
       const payload: BillboardRequest = {
         imageUrl,
         label,
       };
 
-      // TODO: Implement billboard creation logic API
+      if (initialData) {
+        //* Update API call
+        const { data } = await axios.patch(
+          `/api/${params.storeId}/billboards/${params.billboardId}`,
+          payload,
+        );
+        return data;
+      } else {
+        //* Create API call
+        const { data } = await axios.post(
+          `/api/${params.storeId}/billboards`,
+          payload,
+        );
+        return data;
+      }
     },
-    onError: (error) => {},
-    onSuccess: () => {},
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        return toast.error(error.response?.data.message);
+      }
+
+      toast.error('Something went wrong');
+    },
+    onSuccess: (data) => {
+      startTransition(() => {
+        toast.success(toastMessage);
+        router.push(`/${params.storeId}/billboards`);
+      });
+    },
+  });
+
+  const { mutate: deleteBillboard, isLoading: isDeleteLoading } = useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.delete(
+        `/api/${params.storeId}/billboards/${params.billboardId}`,
+      );
+      return data;
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        return toast.error(error.response?.data.message);
+      }
+
+      toast.error('Something went wrong');
+    },
+    onSuccess: (data) => {
+      startTransition(() => {
+        toast.success('Billboard deleted');
+        router.push(`/${params.storeId}/billboards`);
+      });
+    },
   });
 
   const onSubmit = async (data: BillboardRequest) => {
     console.log('FormData: ', data);
+    mutate(data);
   };
 
   return (
     <>
-      {/* AlertModal */}
+      <AlertModal loading={isDeleteLoading} onConfirm={deleteBillboard} />
 
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
@@ -124,7 +176,12 @@ export default function BillboardForm({ initialData }: BillboardFormProps) {
               )}
             />
           </div>
-          <Button className="ml-auto" type="submit">
+          <Button
+            disabled={isLoading}
+            isLoading={isLoading}
+            className="ml-auto"
+            type="submit"
+          >
             {action}
           </Button>
         </form>
