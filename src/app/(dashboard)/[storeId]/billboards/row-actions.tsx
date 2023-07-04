@@ -1,6 +1,5 @@
 'use client';
 
-import React, { startTransition } from 'react';
 import { BillboardColumn } from './columns';
 import {
   DropdownMenu,
@@ -13,9 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import AlertModal from '@/components/modals/AlertModal';
 import { useModal } from '@/app/hooks/useModal';
 
 interface RowActionsProps {
@@ -27,44 +23,15 @@ export default function RowActions({
 }: RowActionsProps) {
   const router = useRouter();
   const params = useParams();
-  const { onOpen, onClose } = useModal();
+  const { onOpen } = useModal();
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
     toast.success('Billboard ID copied to clipboard.');
   };
 
-  /**
-   * @description
-   * Mutation to delete billboard
-   */
-  const { mutate: deleteBillboard, isLoading: isDeleteLoading } = useMutation({
-    mutationFn: async () => {
-      const { data } = await axios.delete(
-        `/api/${params.storeId}/billboards/${id}`,
-      );
-      return data;
-    },
-    onError: (error) => {
-      if (error instanceof AxiosError) {
-        return toast.error(error.response?.data.message);
-      }
-
-      toast.error('Something went wrong');
-    },
-    onSuccess: (data) => {
-      startTransition(() => {
-        toast.success('Billboard deleted');
-        onClose();
-        router.refresh();
-      });
-    },
-  });
-
   return (
     <>
-      <AlertModal loading={isDeleteLoading} onConfirm={deleteBillboard} />
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -82,7 +49,7 @@ export default function RowActions({
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onOpen('alert')}>
+          <DropdownMenuItem onClick={() => onOpen('alert', id)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
