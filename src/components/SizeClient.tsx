@@ -1,3 +1,5 @@
+'use client';
+
 import { SizeColumn, columns } from '@/app/(dashboard)/[storeId]/sizes/columns';
 import { useParams, useRouter } from 'next/navigation';
 import React, { startTransition } from 'react';
