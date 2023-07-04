@@ -5,7 +5,7 @@ import { CategoryRequest, CategoryValidator } from '@/lib/validators/category';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Billboard, Category } from '@prisma/client';
 import { useParams, useRouter } from 'next/navigation';
-import React from 'react';
+import React, { startTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import Heading from './Heading';
 import { Button } from './ui/button';
@@ -29,6 +29,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
+import AlertModal from './modals/AlertModal';
 
 interface CategoryFormProps {
   initialData: Category | null;
@@ -57,13 +61,86 @@ export default function CategoryForm({
     },
   });
 
+  /**
+   * @description
+   * Mutation to create/update category
+   */
+  const { mutate, isLoading } = useMutation({
+    mutationFn: async ({ billboardId, name }: CategoryRequest) => {
+      const payload: CategoryRequest = {
+        billboardId,
+        name,
+      };
+
+      if (initialData) {
+        //* Update API call
+        const { data } = await axios.patch(
+          `/api/${params.storeId}/categories/${params.categoryId}`,
+          payload,
+        );
+        return data;
+      } else {
+        //* Create API call
+        const { data } = await axios.post(
+          `/api/${params.storeId}/categories`,
+          payload,
+        );
+        return data;
+      }
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        return toast.error(error.response?.data.message);
+      }
+
+      toast.error('Something went wrong');
+    },
+    onSuccess: (data) => {
+      startTransition(() => {
+        toast.success(toastMessage);
+        router.push(`/${params.storeId}/categories`);
+        router.refresh();
+      });
+    },
+  });
+
+  /**
+   * @description
+   * Mutation to delete category
+   */
+  const { mutate: deleteCategory, isLoading: isDeleteLoading } = useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.delete(
+        `/api/${params.storeId}/categories/${params.categoryId}`,
+      );
+      return data;
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        return toast.error(error.response?.data.message);
+      }
+
+      toast.error('Something went wrong');
+    },
+    onSuccess: (data) => {
+      startTransition(() => {
+        toast.success('Category deleted');
+        onClose();
+        router.push(`/${params.storeId}/categories`);
+      });
+    },
+  });
+
   const onSubmit = (data: CategoryRequest) => {
     console.log(data);
+    mutate(data);
   };
 
   return (
     <>
       {/* TODO: AlertModal */}
+      <AlertModal loading={isDeleteLoading} onConfirm={deleteCategory} />
+
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
@@ -141,8 +218,8 @@ export default function CategoryForm({
             />
           </div>
           <Button
-            disabled={false}
-            isLoading={false}
+            disabled={isLoading}
+            isLoading={isLoading}
             className="ml-auto"
             type="submit"
           >
