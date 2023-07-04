@@ -1,4 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
+import RowActions from './row-actions';
 
 export type CategoryColumn = {
   id: string;
@@ -23,6 +24,6 @@ export const columns: ColumnDef<CategoryColumn>[] = [
   },
   {
     id: 'actions',
-    // cell: ({ row }) => <RowActions data={row.original} />,
+    cell: ({ row }) => <RowActions data={row.original} />,
   },
 ];
