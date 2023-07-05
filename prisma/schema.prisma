@@ -83,7 +83,7 @@ model Color {
 model Product {
   id         String   @id @default(cuid())
   name       String
-  price      Decimal
+  price      Int
   isFeatured Boolean  @default(false)
   isArchived Boolean  @default(false)
   createdAt  DateTime @default(now())
