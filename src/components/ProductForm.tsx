@@ -146,7 +146,7 @@ export default function ProductForm({
     console.log(data);
     console.log('mutate 호출해주세요~~~~');
     // TODO: mutate 호출
-    // mutate(data);
+    mutate(data);
   };
 
   return (

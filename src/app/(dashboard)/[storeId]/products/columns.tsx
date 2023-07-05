@@ -1,6 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
+import RowActions from './row-actions';
 
 export type ProductColumn = {
   id: string;
@@ -58,6 +59,6 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     id: 'actions',
-    // cell: ({ row }) => <RowActions data={row.original} />
+    cell: ({ row }) => <RowActions data={row.original} />,
   },
 ];
