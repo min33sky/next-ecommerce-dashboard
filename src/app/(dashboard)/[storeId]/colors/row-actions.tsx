@@ -42,7 +42,7 @@ export default function RowActions({ data: { id } }: RowActionsProps) {
             <Copy className="mr-2 h-4 w-4" /> Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/sizes/${id}`)}
+            onClick={() => router.push(`/${params.storeId}/colors/${id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

@@ -43,6 +43,7 @@ export default function ColorForm({ initialData }: ColorFormProps) {
     resolver: zodResolver(ColorValidator),
     defaultValues: initialData || {
       name: '',
+      value: '',
     },
   });
 
