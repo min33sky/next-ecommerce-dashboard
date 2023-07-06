@@ -22,6 +22,7 @@ model Store {
   sizes      Size[]      @relation(name: "StoreToSize")
   colors     Color[]     @relation(name: "StoreToColor")
   products   Product[]   @relation(name: "StoreToProduct")
+  orders     Order[]     @relation(name: "StoreToOrder")
 
   @@index([name])
 }
@@ -81,22 +82,23 @@ model Color {
 }
 
 model Product {
-  id         String   @id @default(cuid())
+  id         String      @id @default(cuid())
   name       String
   price      Int
-  isFeatured Boolean  @default(false)
-  isArchived Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  store      Store    @relation(name: "StoreToProduct", fields: [storeId], references: [id])
+  isFeatured Boolean     @default(false)
+  isArchived Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  store      Store       @relation(name: "StoreToProduct", fields: [storeId], references: [id])
   storeId    String
-  category   Category @relation(name: "CategoryToProduct", fields: [categoryId], references: [id])
+  category   Category    @relation(name: "CategoryToProduct", fields: [categoryId], references: [id])
   categoryId String
-  size       Size     @relation(fields: [sizeId], references: [id])
+  size       Size        @relation(fields: [sizeId], references: [id])
   sizeId     String
-  color      Color    @relation(fields: [colorId], references: [id])
+  color      Color       @relation(fields: [colorId], references: [id])
   colorId    String
   images     Image[]
+  orderItems OrderItem[]
 
   @@index([storeId])
   @@index([categoryId])
@@ -112,5 +114,30 @@ model Image {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([productId])
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  isPaid     Boolean     @default(false)
+  phone      String      @default("")
+  address    String      @default("")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  store      Store       @relation(name: "StoreToOrder", fields: [storeId], references: [id])
+  storeId    String
+  orderItems OrderItem[]
+
+  @@index([storeId])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@index([orderId])
   @@index([productId])
 }
