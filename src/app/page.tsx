@@ -1,15 +1,27 @@
-'use client';
+import { prisma } from '@/lib/db';
+import { auth } from '@clerk/nextjs';
+import { redirect } from 'next/navigation';
 
-import { Button } from '@/components/ui/button';
-import { useModal } from './hooks/useModal';
+export default async function Home() {
+  const { userId } = auth();
 
-export default function Home() {
-  const { onOpen } = useModal();
+  if (!userId) {
+    return redirect('/sign-in');
+  }
+
+  const store = await prisma.store.findFirst({
+    where: {
+      userId,
+    },
+  });
+
+  if (store) {
+    return redirect(`/${store.id}`);
+  }
 
   return (
     <main>
-      <Button onClick={() => onOpen('createStore')}>Open Modal</Button>
-      {/* <StoreModal /> */}
+      <h1>현재 Store가 없어요</h1>
     </main>
   );
 }

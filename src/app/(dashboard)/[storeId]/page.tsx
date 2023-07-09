@@ -1,5 +1,8 @@
-import { prisma } from '@/lib/db';
+import Heading from '@/components/Heading';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { auth } from '@clerk/nextjs';
+import { CreditCard, Package } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
@@ -16,17 +19,47 @@ export default async function DashboardPage({ params: { storeId } }: Props) {
     return redirect('/sign-in');
   }
 
-  //? 일단 주석처리
-  // const store = await prisma.store.findFirst({
-  //   where: {
-  //     userId,
-  //     id: storeId,
-  //   },
-  // });
+  return (
+    <div className="flex flex-col">
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <Heading title="대시보드" description="Overview of your store" />
+        <Separator />
+        <div className="grid grid-cols-3 gap-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total Revenue
+              </CardTitle>
+              <span className="h-4 w-4 text-muted-foreground">W</span>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">W 155715571557</div>
+            </CardContent>
+          </Card>
 
-  // if (!store) {
-  //   return redirect('/');
-  // }
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Sales</CardTitle>
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">+25</div>
+            </CardContent>
+          </Card>
 
-  return <div className="">DashboardPage : {storeId}</div>;
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Products In Stock
+              </CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">1557</div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 }
