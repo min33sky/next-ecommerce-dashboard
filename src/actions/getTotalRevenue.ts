@@ -4,7 +4,7 @@ export const getTotalRevenue = async (storeId: string) => {
   const paidOrders = await prisma.order.findMany({
     where: {
       storeId,
-      isPaid: false, //! 실제로는 true로 바꿔야 함 (webhook에서 true로 바꾸게 처리해야함)
+      isPaid: true, //! 실제로는 true로 바꿔야 함 (webhook에서 true로 바꾸게 처리해야함)
     },
     include: {
       orderItems: {

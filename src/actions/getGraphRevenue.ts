@@ -9,7 +9,7 @@ export const getGraphRevenue = async (storeId: string) => {
   const paidOrders = await prisma.order.findMany({
     where: {
       storeId,
-      isPaid: false, //! 원래는 webhook을 통해 결제가 완료되면 true로 변경해줘야함
+      isPaid: true, //! 원래는 webhook을 통해 결제가 완료되면 true로 변경해줘야함
     },
     include: {
       orderItems: {
