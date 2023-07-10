@@ -3,6 +3,7 @@ import './globals.css';
 import StoreModal from '@/components/modals/StoreModal';
 import ClientProvider from '@/components/ClientProvider';
 import { Toaster } from 'react-hot-toast';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 export const metadata = {
   title: 'Ecommerce Dashboard',
@@ -16,13 +17,19 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="ko" className="antialiased scroll-smooth">
+      <html
+        lang="ko"
+        className="antialiased scroll-smooth"
+        suppressHydrationWarning
+      >
         <body>
-          <ClientProvider>
-            <StoreModal />
-            {children}
-            <Toaster />
-          </ClientProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ClientProvider>
+              <StoreModal />
+              {children}
+              <Toaster />
+            </ClientProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
