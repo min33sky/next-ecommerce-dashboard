@@ -1,3 +1,6 @@
+import { getSalesCount } from '@/actions/getSalesCount';
+import { getStockCount } from '@/actions/getStockCount';
+import { getTotalRevenue } from '@/actions/getTotalRevenue';
 import Heading from '@/components/Heading';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -13,6 +16,10 @@ interface Props {
 }
 
 export default async function DashboardPage({ params: { storeId } }: Props) {
+  const totalRevenue = await getTotalRevenue(storeId);
+  const salesCount = await getSalesCount(storeId);
+  const stockCount = await getStockCount(storeId);
+
   const { userId } = auth();
 
   if (!userId) {
@@ -33,7 +40,7 @@ export default async function DashboardPage({ params: { storeId } }: Props) {
               <span className="h-4 w-4 text-muted-foreground">W</span>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">W 155715571557</div>
+              <div className="text-2xl font-bold">{totalRevenue}</div>
             </CardContent>
           </Card>
 
@@ -43,7 +50,7 @@ export default async function DashboardPage({ params: { storeId } }: Props) {
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+25</div>
+              <div className="text-2xl font-bold">+{salesCount}</div>
             </CardContent>
           </Card>
 
@@ -55,10 +62,17 @@ export default async function DashboardPage({ params: { storeId } }: Props) {
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1557</div>
+              <div className="text-2xl font-bold">{stockCount}</div>
             </CardContent>
           </Card>
         </div>
+
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Overview</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">{/* Overview Component */}</CardContent>
+        </Card>
       </div>
     </div>
   );
